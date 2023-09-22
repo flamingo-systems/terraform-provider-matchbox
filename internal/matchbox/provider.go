@@ -62,12 +62,24 @@ func (p *MatchboxProvider) Configure(ctx context.Context, req provider.Configure
 		return
 	}
 
-	client, err := NewMatchboxClient(&data)
-	if err != nil {
-		resp.Diagnostics.AddError("oops", err.Error())
+	endpoint := data.Endpoint.ValueString()
+	ca := []byte(data.CA.ValueString())
+	clientCert := []byte(data.ClientCert.ValueString())
+	clientKey := []byte(data.ClientKey.ValueString())
+
+	config := &Config{
+		Endpoint:   endpoint,
+		ClientCert: clientCert,
+		ClientKey:  clientKey,
+		CA:         ca,
 	}
 
-	resp.DataSourceData = client
+	client := NewMatchBoxClient(config)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	resp.ResourceData = client
 }
 

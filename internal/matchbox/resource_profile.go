@@ -115,9 +115,9 @@ func (r *ProfileResource) Configure(ctx context.Context, req resource.ConfigureR
 		return
 	}
 
-	client, ok := req.ProviderData.(*matchbox.Client)
+	client, err := req.ProviderData.(*MatchboxClient).Get()
 
-	if !ok {
+	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unexpected Resource Configure Type",
 			fmt.Sprintf("Expected *matchbox.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
